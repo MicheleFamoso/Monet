@@ -1,26 +1,152 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * MONETA × Nothing Design System
+ * Tokens from nothing-design/references/tokens.md
+ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+
+  --black: #f5f5f5;
+  --surface: #ffffff;
+  --surface-raised: #f0f0f0;
+  --border: #e8e8e8;
+  --border-visible: #cccccc;
+  --text-disabled: #999999;
+  --text-secondary: #666666;
+  --text-primary: #1a1a1a;
+  --text-display: #000000;
+  --interactive: #007aff;
+
+  --accent: #d71921;
+  --accent-subtle: rgba(215, 25, 33, 0.15);
+  --success: #4a9e5c;
+  --warning: #d4a843;
+  --error: #d71921;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --black: #000000;
+  --surface: #111111;
+  --surface-raised: #1a1a1a;
+  --border: #222222;
+  --border-visible: #333333;
+  --text-disabled: #666666;
+  --text-secondary: #999999;
+  --text-primary: #e8e8e8;
+  --text-display: #ffffff;
+  --interactive: #5b9bf6;
+}
+
+@theme {
+  --text-display-xl: 72px;
+  --text-display-xl--line-height: 1;
+  --text-display-xl--letter-spacing: -0.03em;
+
+  --text-display-lg: 48px;
+  --text-display-lg--line-height: 1.05;
+  --text-display-lg--letter-spacing: -0.02em;
+
+  --text-display-md: 36px;
+  --text-display-md--line-height: 1.1;
+  --text-display-md--letter-spacing: -0.02em;
+
+  --text-heading: 24px;
+  --text-heading--line-height: 1.2;
+  --text-heading--letter-spacing: -0.01em;
+
+  --text-subheading: 18px;
+  --text-subheading--line-height: 1.3;
+
+  --text-body: 16px;
+  --text-body--line-height: 1.5;
+
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 1.5;
+  --text-body-sm--letter-spacing: 0.01em;
+
+  --text-caption: 12px;
+  --text-caption--line-height: 1.4;
+  --text-caption--letter-spacing: 0.04em;
+
+  --text-label: 11px;
+  --text-label--line-height: 1.2;
+  --text-label--letter-spacing: 0.08em;
+
+  --ease-out-technical: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-black: var(--black);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-border-visible: var(--border-visible);
+  --color-display: var(--text-display);
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-disabled: var(--text-disabled);
+  --color-accent: var(--accent);
+  --color-accent-subtle: var(--accent-subtle);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-interactive: var(--interactive);
+
+  --font-sans: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-data), ui-monospace, "SF Mono", monospace;
+  --font-display: var(--font-doto), var(--font-data), monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    background-color: var(--black);
+    color: var(--text-primary);
+    font-family: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--text-display);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Instrument-panel labels: Space Mono, ALL CAPS */
+@utility label {
+  font-family: var(--font-data), ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Dot-matrix motif (tokens.md Section 6) */
+.dot-grid {
+  background-image: radial-gradient(circle, var(--border-visible) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.dot-grid-subtle {
+  background-image: radial-gradient(circle, var(--border) 0.5px, transparent 0.5px);
+  background-size: 12px 12px;
 }
