@@ -175,3 +175,51 @@ export function mesePrecedente(anno: number, mese: number): { anno: number; mese
 export function meseSuccessivo(anno: number, mese: number): { anno: number; mese: number } {
   return mese + 1 > 12 ? { anno: anno + 1, mese: 1 } : { anno, mese: mese + 1 };
 }
+
+export interface Gruppo {
+  nome: string;
+  colore?: string;
+  totale: number;
+  voci: MovimentoConCategoria[];
+}
+
+export function aggPerCategoria(voci: MovimentoConCategoria[]): Gruppo[] {
+  const mappa = new Map<string, Gruppo>();
+  const senzaCategoria: Gruppo = { nome: "Senza categoria", totale: 0, voci: [] };
+  for (const v of voci) {
+    const c = v.categoriaNome;
+    if (c === undefined) {
+      senzaCategoria.voci.push(v);
+      senzaCategoria.totale += v.movimento.importo;
+      continue;
+    }
+    const g =
+      mappa.get(c) ??
+      ({ nome: c, colore: v.categoriaColore, totale: 0, voci: [] as MovimentoConCategoria[] } as Gruppo);
+    g.voci.push(v);
+    g.totale += v.movimento.importo;
+    mappa.set(c, g);
+  }
+  const gruppi = [...mappa.values()].sort((a, b) => b.totale - a.totale);
+  if (senzaCategoria.voci.length > 0) gruppi.push(senzaCategoria);
+  return gruppi;
+}
+
+const GIORNI_IT = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+
+export function etichettaGiorno(data: string): string {
+  const d = new Date(`${data}T00:00:00`);
+  return `${GIORNI_IT[d.getDay()]} ${d.getDate()} ${MESI_IT[d.getMonth()].toUpperCase()}`;
+}
+
+export function giornoPrecedente(data: string): string {
+  const d = new Date(`${data}T00:00:00`);
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+
+export function giornoSuccessivo(data: string): string {
+  const d = new Date(`${data}T00:00:00`);
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0, 10);
+}

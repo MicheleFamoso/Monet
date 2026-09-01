@@ -2,7 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { getMovimentiConto, etichettaMese, mesePrecedente, meseSuccessivo, type MovimentoConCategoria } from "@/lib/queries";
+import {
+  getMovimentiConto,
+  etichettaMese,
+  mesePrecedente,
+  meseSuccessivo,
+  aggPerCategoria,
+  type Gruppo,
+} from "@/lib/queries";
 import { formatEuro } from "@/lib/money";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { PeriodNav } from "@/components/ui/period-nav";
@@ -11,36 +18,9 @@ import { cn } from "@/lib/cn";
 
 type Periodo = "mese" | "tutto" | "anno";
 
-interface Gruppo {
-  nome: string;
-  colore?: string;
-  totale: number;
-  voci: MovimentoConCategoria[];
-}
-
 interface MovimentiContoPeriodoProps {
   contoId: number;
   className?: string;
-}
-
-function aggPerCategoria(voci: MovimentoConCategoria[]): Gruppo[] {
-  const mappa = new Map<string, Gruppo>();
-  const senzaCategoria: Gruppo = { nome: "Senza categoria", totale: 0, voci: [] };
-  for (const v of voci) {
-    const c = v.categoriaNome;
-    if (c === undefined) {
-      senzaCategoria.voci.push(v);
-      senzaCategoria.totale += v.movimento.importo;
-      continue;
-    }
-    const g = mappa.get(c) ?? { nome: c, colore: v.categoriaColore, totale: 0, voci: [] as MovimentoConCategoria[] };
-    g.voci.push(v);
-    g.totale += v.movimento.importo;
-    mappa.set(c, g);
-  }
-  const gruppi = [...mappa.values()].sort((a, b) => b.totale - a.totale);
-  if (senzaCategoria.voci.length > 0) gruppi.push(senzaCategoria);
-  return gruppi;
 }
 
 export function MovimentiContoPeriodo({ contoId, className }: MovimentiContoPeriodoProps) {
