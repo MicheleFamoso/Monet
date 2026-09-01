@@ -237,10 +237,14 @@ function divideInSettimane(
     });
 
     const gruppi = aggPerCategoria(voci);
+    const spese = voci
+      .filter((r) => r.movimento.tipo === "uscita")
+      .reduce((acc, r) => acc + r.movimento.importo, 0);
     if (gruppi.length > 0 || inizio <= oggi) {
       prese.push({
         label: `${num}ª settimana`,
         range: `${String(giornoInizio).padStart(2, "0")}–${String(giornoFine).padStart(2, "0")} ${MESI_IT_SHORT[mese - 1]} ${anno}`,
+        spese,
         gruppi,
       });
     }

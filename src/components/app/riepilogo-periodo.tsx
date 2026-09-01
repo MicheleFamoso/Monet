@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 export interface Settimana {
   label: string;
   range: string;
+  spese: number;
   gruppi: Gruppo[];
 }
 
@@ -36,7 +37,12 @@ export function RiepilogoPeriodo({ vista, settimane, vociGiorno }: RiepilogoPeri
           {settimane.map((s, i) => (
             <div key={i} className="border-t border-border py-4 first:border-t-0 first:pt-0">
               <p className="label text-secondary">{s.label}</p>
-              <p className="mt-0.5 font-mono text-caption text-disabled">{s.range}</p>
+              <div className="mt-0.5 flex items-baseline justify-between gap-3">
+                <p className="font-mono text-caption text-disabled">{s.range}</p>
+                <p className="shrink-0 font-mono text-body tabular-nums text-accent">
+                  {formatEuro(s.spese)}
+                </p>
+              </div>
               <div className="mt-3 flex flex-col">
                 {s.gruppi.map((g) => (
                   <button
