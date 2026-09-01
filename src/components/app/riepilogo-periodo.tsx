@@ -29,6 +29,9 @@ export function RiepilogoPeriodo({ vista, settimane, vociGiorno }: RiepilogoPeri
   return (
     <div className="flex flex-col gap-6">
       {vista === "mese" ? (
+        settimane.length === 0 ? (
+          <p className="py-6 text-center font-mono text-caption text-disabled">[NESSUN MOVIMENTO]</p>
+        ) : (
         <div className="flex flex-col">
           {settimane.map((s, i) => (
             <div key={i} className="border-t border-border py-4 first:border-t-0 first:pt-0">
@@ -62,6 +65,7 @@ export function RiepilogoPeriodo({ vista, settimane, vociGiorno }: RiepilogoPeri
             </div>
           ))}
         </div>
+        )
       ) : (
         <div className="flex flex-col border-t border-border">
           {vociGiorno.map((v) => (

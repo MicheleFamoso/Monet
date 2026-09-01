@@ -46,6 +46,8 @@ export function Overview() {
     [riferimento?.conto.id],
   );
 
+  const oggi = now.toISOString().slice(0, 10);
+
   const { saldo, spese, settimane, vociGiorno } = useMemo(() => {
     const movimenti = movimentiConto ?? [];
     if (vista === "mese") {
@@ -65,7 +67,7 @@ export function Overview() {
         .filter((r) => r.movimento.tipo === "uscita")
         .reduce((acc, r) => acc + r.movimento.importo, 0);
 
-      const settimane = divideInSettimane(delMese, anno, mese);
+      const settimane = divideInSettimane(delMese, anno, mese, oggi);
 
       return { saldo, spese, settimane, vociGiorno: [] as typeof vociGiorno };
     }
@@ -80,7 +82,7 @@ export function Overview() {
       .reduce((acc, r) => acc + r.movimento.importo, 0);
 
     return { saldo: saldoGiorno, spese, settimane: [] as Settimana[], vociGiorno };
-  }, [movimentiConto, vista, anno, mese, giorno]);
+  }, [movimentiConto, vista, anno, mese, giorno, oggi]);
 
   const negativo = saldo < 0;
 
@@ -216,33 +218,38 @@ function divideInSettimane(
   movimenti: MovimentoConCategoria[],
   anno: number,
   mese: number,
+  oggi: string,
 ): Settimana[] {
   const primoDelMese = new Date(anno, mese - 1, 1);
   let lunedi = (primoDelMese.getDay() + 6) % 7;
   const giorniMese = new Date(anno, mese, 0).getDate();
 
-  const settimane: Settimana[] = [];
+  const prese: Settimana[] = [];
   let num = 1;
   let giornoInizio = 1;
   while (giornoInizio <= giorniMese) {
     const giornoFine = Math.min(giornoInizio + (6 - lunedi), giorniMese);
+    const inizio = `${anno}-${String(mese).padStart(2, "0")}-${String(giornoInizio).padStart(2, "0")}`;
 
     const voci = movimenti.filter((r) => {
       const g = Number(r.movimento.data.slice(8, 10));
       return g >= giornoInizio && g <= giornoFine;
     });
 
-    settimane.push({
-      label: `${num}ª settimana`,
-      range: `${String(giornoInizio).padStart(2, "0")}–${String(giornoFine).padStart(2, "0")} ${MESI_IT_SHORT[mese - 1]} ${anno}`,
-      gruppi: aggPerCategoria(voci),
-    });
+    const gruppi = aggPerCategoria(voci);
+    if (gruppi.length > 0 || inizio <= oggi) {
+      prese.push({
+        label: `${num}ª settimana`,
+        range: `${String(giornoInizio).padStart(2, "0")}–${String(giornoFine).padStart(2, "0")} ${MESI_IT_SHORT[mese - 1]} ${anno}`,
+        gruppi,
+      });
+    }
 
     num++;
     giornoInizio = giornoFine + 1;
     lunedi = 0;
   }
-  return settimane;
+  return prese.reverse();
 }
 
 const MESI_IT_SHORT = [
