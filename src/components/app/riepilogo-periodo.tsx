@@ -39,16 +39,21 @@ export function RiepilogoPeriodo({ vista, settimane, vociGiorno }: RiepilogoPeri
             return (
               <div
                 key={i}
-                className="relative border-b border-border py-4 pl-6 last:border-b-0 first:pt-0"
+                className="relative border-b border-border py-4 pl-6 last:border-b-0"
               >
                 <span
-                  className="absolute -left-4 top-0 flex w-4 flex-col items-center"
+                  className="absolute -left-4 top-0 h-full w-4"
                   aria-hidden
                 >
-                  <span className="mt-[14px] h-[3px] w-3.5 rounded-full bg-accent" />
                   {!ultima ? (
-                    <span className="mt-2 w-0 flex-1 border-l-2 border-dashed border-border-visible" />
+                    <span
+                      className={cn(
+                        "absolute left-1/2 bottom-0 w-0 border-l border-dashed border-disabled",
+                        i === 0 ? "top-[24px]" : "top-0",
+                      )}
+                    />
                   ) : null}
+                  <span className="absolute left-1/2 top-[21px] h-[3px] w-3.5 -translate-x-1/2 rounded-full bg-accent" />
                 </span>
                 <p className="label text-secondary">{s.label}</p>
                 <div className="mt-0.5 flex items-baseline justify-between gap-3">
