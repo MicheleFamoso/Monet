@@ -198,9 +198,8 @@ export function IconCrescitaDot({ className }: IconProps) {
     <DotMatrix
       className={className}
       isOn={(x, y) =>
-        inRett(x, y, 11.6, 11, 12.4, 19) ||
-        inTriangolo(x, y, 6, 12, 12, 4, 18, 12) ||
-        inRett(x, y, 7, 18, 17, 21)
+        inRett(x, y, 8.5, 5, 15.5, 21) ||
+        inTriangolo(x, y, 5.5, 13, 12, 4, 18.5, 13)
       }
     />
   );
