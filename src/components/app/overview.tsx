@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { getContiConSaldo } from "@/lib/queries";
 import { formatEuro } from "@/lib/money";
 import { FullScreenSheet } from "@/components/ui/full-screen-sheet";
-import { IconCrescitaDot, IconUsciteDot, IconSwapDot, IconStarDot } from "@/components/ui/icons";
+import { IconCrescitaDot, IconUsciteDot, IconSwap, IconStarDot } from "@/components/ui/icons";
 import { ContoIcona } from "./conto-form";
 
 export function Overview() {
@@ -44,7 +44,7 @@ export function Overview() {
               className="inline-flex h-6 w-6 items-center justify-center text-secondary transition-colors hover:text-primary"
               aria-label="Cambia conto"
             >
-              <IconSwapDot className="h-5 w-5" />
+              <IconSwap className="h-5 w-5" />
             </button>
           ) : null}
         </div>
@@ -54,7 +54,7 @@ export function Overview() {
           }`}
         >
           <IconCrescitaDot className="h-8 w-8 shrink-0" />
-          <p className="font-display text-display-xl leading-none tracking-tight">
+          <p className="font-display text-display-xl font-bold leading-none tracking-tight">
             {formatEuro(saldo)}
           </p>
         </div>
