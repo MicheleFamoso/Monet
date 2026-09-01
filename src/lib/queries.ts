@@ -212,14 +212,16 @@ export function etichettaGiorno(data: string): string {
   return `${GIORNI_IT[d.getDay()]} ${d.getDate()} ${MESI_IT[d.getMonth()].toUpperCase()}`;
 }
 
-export function giornoPrecedente(data: string): string {
-  const d = new Date(`${data}T00:00:00`);
-  d.setDate(d.getDate() - 1);
+function spostaGiorno(data: string, delta: number): string {
+  const d = new Date(`${data}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + delta);
   return d.toISOString().slice(0, 10);
 }
 
+export function giornoPrecedente(data: string): string {
+  return spostaGiorno(data, -1);
+}
+
 export function giornoSuccessivo(data: string): string {
-  const d = new Date(`${data}T00:00:00`);
-  d.setDate(d.getDate() + 1);
-  return d.toISOString().slice(0, 10);
+  return spostaGiorno(data, 1);
 }
