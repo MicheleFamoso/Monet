@@ -3,6 +3,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { getContoRiferimento } from "@/lib/queries";
 import { formatEuro } from "@/lib/money";
+import { IconPiggyDot, IconUsciteDot } from "@/components/ui/icons";
 
 export function Overview() {
   const riferimento = useLiveQuery(() => getContoRiferimento(), []);
@@ -19,20 +20,27 @@ export function Overview() {
   const negativo = saldo < 0;
 
   return (
-    <section className="dot-grid-subtle mt-4 flex flex-col gap-10 py-14">
+    <section className="dot-grid-subtle mt-4 flex items-end justify-between gap-10 py-14">
       <div>
         <p className="label text-secondary">
           {riferimento ? `Saldo · ${riferimento.conto.nome}` : "Saldo"}
         </p>
-        <p
-          className={`mt-4 font-display text-display-xl leading-none tracking-tight ${
+        <div
+          className={`mt-4 flex items-center gap-4 ${
             negativo ? "text-accent" : "text-display"
           }`}
         >
-          {formatEuro(saldo)}
-        </p>
-        <p className="mt-4 font-display font-bold text-display-md leading-none tracking-tight text-accent">
-          Spese · {formatEuro(riferimento?.usciteMese ?? 0)}
+          <IconPiggyDot className="h-8 w-8 shrink-0" />
+          <p className="font-display text-display-xl leading-none tracking-tight">
+            {formatEuro(saldo)}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-col items-end gap-2 text-accent">
+        <IconUsciteDot className="h-6 w-6" />
+        <p className="font-display text-display-md font-bold leading-none tracking-tight">
+          {formatEuro(riferimento?.usciteMese ?? 0)}
         </p>
       </div>
     </section>

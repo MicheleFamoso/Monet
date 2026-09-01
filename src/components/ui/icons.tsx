@@ -135,3 +135,97 @@ export function IconStarDot({ className }: IconProps) {
     </svg>
   );
 }
+
+const DOT_GRID = 9;
+const DOT_CELL = 24 / DOT_GRID;
+
+interface DotMatrixProps {
+  isOn: (x: number, y: number) => boolean;
+  className?: string;
+}
+
+function DotMatrix({ isOn, className }: DotMatrixProps) {
+  const pts: { x: number; y: number; accesa: boolean }[] = [];
+  for (let r = 0; r < DOT_GRID; r++) {
+    for (let c = 0; c < DOT_GRID; c++) {
+      const x = c * DOT_CELL + DOT_CELL / 2;
+      const y = r * DOT_CELL + DOT_CELL / 2;
+      pts.push({ x, y, accesa: isOn(x, y) });
+    }
+  }
+  return (
+    <svg className={className} width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+      {pts.map((p, i) => (
+        <circle
+          key={i}
+          cx={p.x}
+          cy={p.y}
+          r="0.85"
+          className={p.accesa ? "fill-current" : "fill-border"}
+          opacity={p.accesa ? 1 : 0.5}
+        />
+      ))}
+    </svg>
+  );
+}
+
+function inEllisse(x: number, y: number, cx: number, cy: number, rx: number, ry: number): boolean {
+  const dx = (x - cx) / rx;
+  const dy = (y - cy) / ry;
+  return dx * dx + dy * dy <= 1;
+}
+
+function inCerchio(x: number, y: number, cx: number, cy: number, r: number): boolean {
+  return (x - cx) * (x - cx) + (y - cy) * (y - cy) <= r * r;
+}
+
+function inRett(x: number, y: number, x0: number, y0: number, x1: number, y1: number): boolean {
+  return x >= x0 && x <= x1 && y >= y0 && y <= y1;
+}
+
+function inTriangolo(
+  x: number,
+  y: number,
+  ax: number,
+  ay: number,
+  bx: number,
+  by: number,
+  cx: number,
+  cy: number
+): boolean {
+  const segno = (p1x: number, p1y: number, p2x: number, p2y: number, p3x: number, p3y: number) =>
+    (p1x - p3x) * (p2y - p3y) - (p2x - p3x) * (p1y - p3y);
+  const d1 = segno(x, y, ax, ay, bx, by);
+  const d2 = segno(x, y, bx, by, cx, cy);
+  const d3 = segno(x, y, cx, cy, ax, ay);
+  const neg = d1 < 0 || d2 < 0 || d3 < 0;
+  const pos = d1 > 0 || d2 > 0 || d3 > 0;
+  return !(neg && pos);
+}
+
+export function IconPiggyDot({ className }: IconProps) {
+  return (
+    <DotMatrix
+      className={className}
+      isOn={(x, y) =>
+        inEllisse(x, y, 12.5, 13, 7.5, 5.5) ||
+        inCerchio(x, y, 6, 15, 2.4) ||
+        inCerchio(x, y, 16.5, 6.2, 2) ||
+        inRett(x, y, 8, 18, 10.6, 21) ||
+        inRett(x, y, 14, 18, 17, 21)
+      }
+    />
+  );
+}
+
+export function IconUsciteDot({ className }: IconProps) {
+  return (
+    <DotMatrix
+      className={className}
+      isOn={(x, y) =>
+        (x >= 2 && x <= 13.5 && y >= 8.5 && y <= 15.5) ||
+        inTriangolo(x, y, 13, 5.5, 22.5, 12, 13, 18.5)
+      }
+    />
+  );
+}
