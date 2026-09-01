@@ -3,7 +3,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { getContoRiferimento } from "@/lib/queries";
 import { formatEuro } from "@/lib/money";
-import { IconPiggyDot, IconUsciteDot } from "@/components/ui/icons";
+import { IconCrescitaDot, IconUsciteDot } from "@/components/ui/icons";
 
 export function Overview() {
   const riferimento = useLiveQuery(() => getContoRiferimento(), []);
@@ -30,7 +30,7 @@ export function Overview() {
             negativo ? "text-accent" : "text-display"
           }`}
         >
-          <IconPiggyDot className="h-8 w-8 shrink-0" />
+          <IconCrescitaDot className="h-8 w-8 shrink-0" />
           <p className="font-display text-display-xl leading-none tracking-tight">
             {formatEuro(saldo)}
           </p>

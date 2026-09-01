@@ -169,8 +169,8 @@ function DotMatrix({ isOn, className }: DotMatrixProps) {
   );
 }
 
-function inCerchio(x: number, y: number, cx: number, cy: number, r: number): boolean {
-  return (x - cx) * (x - cx) + (y - cy) * (y - cy) <= r * r;
+function inRett(x: number, y: number, x0: number, y0: number, x1: number, y1: number): boolean {
+  return x >= x0 && x <= x1 && y >= y0 && y <= y1;
 }
 
 function inTriangolo(
@@ -193,15 +193,14 @@ function inTriangolo(
   return !(neg && pos);
 }
 
-export function IconPiggyDot({ className }: IconProps) {
+export function IconCrescitaDot({ className }: IconProps) {
   return (
     <DotMatrix
       className={className}
       isOn={(x, y) =>
-        inCerchio(x, y, 6, 8, 2.0) ||
-        inCerchio(x, y, 18, 8, 2.0) ||
-        inCerchio(x, y, 9.33, 14.67, 0.8) ||
-        inCerchio(x, y, 14.67, 14.67, 0.8)
+        inRett(x, y, 11.6, 11, 12.4, 19) ||
+        inTriangolo(x, y, 6, 12, 12, 4, 18, 12) ||
+        inRett(x, y, 7, 18, 17, 21)
       }
     />
   );
