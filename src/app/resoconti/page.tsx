@@ -1,4 +1,8 @@
-import { Card, CardTitle } from "@/components/ui/card";
+"use client";
+
+import { RiepilogoMese } from "@/components/app/riepilogo-mese";
+import { BudgetMese } from "@/components/app/budget-mese";
+import { AndamentoAnnuo } from "@/components/app/andamento-annuo";
 
 export default function ResocontiPage() {
   return (
@@ -10,13 +14,11 @@ export default function ResocontiPage() {
         </h1>
       </header>
 
-      <Card>
-        <CardTitle>In arrivo</CardTitle>
-        <p className="mt-4 font-sans text-body-sm leading-6 text-secondary">
-          Qui appariranno i grafici e le statistiche sui tuoi movimenti: andamento mensile,
-          confronto entrate/uscite, distribuzione per categoria e altro.
-        </p>
-      </Card>
+      <RiepilogoMese />
+
+      <BudgetMese />
+
+      <AndamentoAnnuo />
     </main>
   );
 }
