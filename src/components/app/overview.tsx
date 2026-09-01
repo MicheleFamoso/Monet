@@ -236,18 +236,16 @@ function divideInSettimane(
       return g >= giornoInizio && g <= giornoFine;
     });
 
-    const usciteVoci = voci.filter((r) => r.movimento.tipo === "uscita");
-    const entrateVoci = voci.filter((r) => r.movimento.tipo === "entrata");
-    const uscite = aggPerCategoria(usciteVoci);
-    const entrate = aggPerCategoria(entrateVoci);
-    const spese = usciteVoci.reduce((acc, r) => acc + r.movimento.importo, 0);
-    if (uscite.length > 0 || entrate.length > 0 || inizio <= oggi) {
+    const movimentiSettimana = aggPerCategoria(voci);
+    const spese = voci
+      .filter((r) => r.movimento.tipo === "uscita")
+      .reduce((acc, r) => acc + r.movimento.importo, 0);
+    if (movimentiSettimana.length > 0 || inizio <= oggi) {
       prese.push({
         label: `${num}ª settimana`,
         range: `${String(giornoInizio).padStart(2, "0")}–${String(giornoFine).padStart(2, "0")} ${MESI_IT_SHORT[mese - 1]} ${anno}`,
         spese,
-        uscite,
-        entrate,
+        movimenti: movimentiSettimana,
       });
     }
 

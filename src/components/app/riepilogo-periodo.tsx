@@ -10,8 +10,7 @@ export interface Settimana {
   label: string;
   range: string;
   spese: number;
-  uscite: Gruppo[];
-  entrate: Gruppo[];
+  movimenti: Gruppo[];
 }
 
 interface RiepilogoPeriodoProps {
@@ -35,38 +34,72 @@ export function RiepilogoPeriodo({ vista, settimane, vociGiorno }: RiepilogoPeri
           <p className="py-6 text-center font-mono text-caption text-disabled">[NESSUN MOVIMENTO]</p>
         ) : (
         <div className="flex flex-col">
-          {settimane.map((s, i) => (
-            <div key={i} className="border-t border-border py-4 first:border-t-0 first:pt-0">
-              <p className="label text-secondary">{s.label}</p>
-              <div className="mt-0.5 flex items-baseline justify-between gap-3">
-                <p className="font-mono text-caption text-disabled">{s.range}</p>
-                <p className="shrink-0 font-mono text-body tabular-nums text-accent">
-                  {formatEuro(s.spese)}
-                </p>
+          {settimane.map((s, i) => {
+            const ultima = i === settimane.length - 1;
+            return (
+              <div
+                key={i}
+                className="relative border-b border-border py-4 pl-6 last:border-b-0 first:pt-0"
+              >
+                <span
+                  className="absolute -left-4 top-0 flex w-4 flex-col items-center"
+                  aria-hidden
+                >
+                  <span className="mt-[14px] h-[3px] w-3.5 rounded-full bg-accent" />
+                  {!ultima ? (
+                    <span className="mt-2 w-0 flex-1 border-l-2 border-dashed border-border-visible" />
+                  ) : null}
+                </span>
+                <p className="label text-secondary">{s.label}</p>
+                <div className="mt-0.5 flex items-baseline justify-between gap-3">
+                  <p className="font-mono text-caption text-disabled">{s.range}</p>
+                  <p className="shrink-0 font-mono text-body tabular-nums text-accent">
+                    {formatEuro(s.spese)}
+                  </p>
+                </div>
+                <div className="mt-3 flex flex-col">
+                  {s.movimenti.length === 0 ? (
+                    <p className="py-4 text-center font-mono text-caption text-disabled">[NESSUN MOVIMENTO]</p>
+                  ) : (
+                    <>
+                      <p className="label text-secondary">Movimenti</p>
+                      <div className="mt-2 flex flex-col">
+                        {s.movimenti.map((g) => {
+                          const soloEntrate = g.voci.every((v) => v.movimento.tipo === "entrata");
+                          return (
+                            <button
+                              key={g.nome}
+                              type="button"
+                              onClick={() => setDettaglio({ titolo: `${g.nome} · ${s.label}`, voci: g.voci })}
+                              className="flex w-full items-center justify-between gap-4 border-b border-border py-3 text-left transition-colors last:border-b-0 hover:bg-surface-raised"
+                            >
+                              <span className="flex min-w-0 items-center gap-2">
+                                <span
+                                  className="h-2.5 w-2.5 shrink-0 rounded-full"
+                                  style={{ backgroundColor: g.colore ?? "var(--border-visible)" }}
+                                  aria-hidden
+                                />
+                                <span className="truncate font-sans text-body text-primary">{g.nome}</span>
+                              </span>
+                              <span
+                                className={cn(
+                                  "shrink-0 font-mono text-body tabular-nums",
+                                  soloEntrate ? "text-success" : "text-primary",
+                                )}
+                              >
+                                {soloEntrate ? "+" : ""}
+                                {formatEuro(g.totale)}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
-              <div className="mt-3 flex flex-col gap-4">
-                {s.uscite.length === 0 && s.entrate.length === 0 ? (
-                  <p className="py-4 text-center font-mono text-caption text-disabled">[NESSUN MOVIMENTO]</p>
-                ) : (
-                  <>
-                    <SezioneWeek
-                      titolo="Uscite"
-                      gruppi={s.uscite}
-                      onApri={(g) => setDettaglio({ titolo: `${g.nome} · ${s.label}`, voci: g.voci })}
-                    />
-                    {s.entrate.length > 0 ? (
-                      <SezioneWeek
-                        titolo="Entrate"
-                        gruppi={s.entrate}
-                        success
-                        onApri={(g) => setDettaglio({ titolo: `${g.nome} · ${s.label}`, voci: g.voci })}
-                      />
-                    ) : null}
-                  </>
-                )}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
         )
       ) : (
@@ -152,51 +185,6 @@ export function RiepilogoPeriodo({ vista, settimane, vociGiorno }: RiepilogoPeri
           </div>
         ) : null}
       </FullScreenSheet>
-    </div>
-  );
-}
-
-function SezioneWeek({
-  titolo,
-  gruppi,
-  onApri,
-  success = false,
-}: {
-  titolo: string;
-  gruppi: Gruppo[];
-  onApri: (g: Gruppo) => void;
-  success?: boolean;
-}) {
-  return (
-    <div className="flex flex-col">
-      <p className={cn("label", success ? "text-success" : "text-secondary")}>{titolo}</p>
-      <div className="mt-2 flex flex-col">
-        {gruppi.map((g) => (
-          <button
-            key={g.nome}
-            type="button"
-            onClick={() => onApri(g)}
-            className="flex w-full items-center justify-between gap-4 border-b border-border py-3 text-left transition-colors last:border-b-0 hover:bg-surface-raised"
-          >
-            <span className="flex min-w-0 items-center gap-2">
-              <span
-                className="h-2.5 w-2.5 shrink-0 rounded-full"
-                style={{ backgroundColor: g.colore ?? "var(--border-visible)" }}
-                aria-hidden
-              />
-              <span className="truncate font-sans text-body text-primary">{g.nome}</span>
-            </span>
-            <span
-              className={cn(
-                "shrink-0 font-mono text-body tabular-nums",
-                success ? "text-success" : "text-primary",
-              )}
-            >
-              {formatEuro(g.totale)}
-            </span>
-          </button>
-        ))}
-      </div>
     </div>
   );
 }
