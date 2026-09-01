@@ -36,11 +36,14 @@ export function Overview() {
           </p>
         </div>
 
-        <div className="mt-5 flex items-end justify-end gap-2 text-accent">
-          <IconUsciteDot className="h-5 w-5" />
-          <p className="font-display text-display-md font-bold leading-none tracking-tight">
-            {formatEuro(riferimento?.usciteMese ?? 0)}
-          </p>
+        <div className="mt-5 flex flex-col items-end justify-end gap-1 text-accent">
+          <p className="label text-accent">Uscite</p>
+          <div className="flex items-center gap-2">
+            <IconUsciteDot className="h-5 w-5" />
+            <p className="font-display text-display-md font-bold leading-none tracking-tight">
+              {formatEuro(riferimento?.usciteMese ?? 0)}
+            </p>
+          </div>
         </div>
       </div>
     </section>
