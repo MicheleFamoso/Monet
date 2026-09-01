@@ -169,18 +169,8 @@ function DotMatrix({ isOn, className }: DotMatrixProps) {
   );
 }
 
-function inEllisse(x: number, y: number, cx: number, cy: number, rx: number, ry: number): boolean {
-  const dx = (x - cx) / rx;
-  const dy = (y - cy) / ry;
-  return dx * dx + dy * dy <= 1;
-}
-
 function inCerchio(x: number, y: number, cx: number, cy: number, r: number): boolean {
   return (x - cx) * (x - cx) + (y - cy) * (y - cy) <= r * r;
-}
-
-function inRett(x: number, y: number, x0: number, y0: number, x1: number, y1: number): boolean {
-  return x >= x0 && x <= x1 && y >= y0 && y <= y1;
 }
 
 function inTriangolo(
@@ -208,11 +198,10 @@ export function IconPiggyDot({ className }: IconProps) {
     <DotMatrix
       className={className}
       isOn={(x, y) =>
-        inEllisse(x, y, 12.5, 13, 7.5, 5.5) ||
-        inCerchio(x, y, 6, 15, 2.4) ||
-        inCerchio(x, y, 16.5, 6.2, 2) ||
-        inRett(x, y, 8, 18, 10.6, 21) ||
-        inRett(x, y, 14, 18, 17, 21)
+        inCerchio(x, y, 6, 8, 2.0) ||
+        inCerchio(x, y, 18, 8, 2.0) ||
+        inCerchio(x, y, 9.33, 14.67, 0.8) ||
+        inCerchio(x, y, 14.67, 14.67, 0.8)
       }
     />
   );

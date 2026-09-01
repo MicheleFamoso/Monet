@@ -20,7 +20,7 @@ export function Overview() {
   const negativo = saldo < 0;
 
   return (
-    <section className="dot-grid-subtle mt-4 flex items-end justify-between gap-10 py-14">
+    <section className="dot-grid-subtle mt-4 flex flex-col gap-10 py-14">
       <div>
         <p className="label text-secondary">
           {riferimento ? `Saldo · ${riferimento.conto.nome}` : "Saldo"}
@@ -35,13 +35,13 @@ export function Overview() {
             {formatEuro(saldo)}
           </p>
         </div>
-      </div>
 
-      <div className="flex flex-col items-end gap-2 text-accent">
-        <IconUsciteDot className="h-6 w-6" />
-        <p className="font-display text-display-md font-bold leading-none tracking-tight">
-          {formatEuro(riferimento?.usciteMese ?? 0)}
-        </p>
+        <div className="mt-5 flex items-end justify-end gap-2 text-accent">
+          <IconUsciteDot className="h-5 w-5" />
+          <p className="font-display text-display-md font-bold leading-none tracking-tight">
+            {formatEuro(riferimento?.usciteMese ?? 0)}
+          </p>
+        </div>
       </div>
     </section>
   );
