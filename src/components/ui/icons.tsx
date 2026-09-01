@@ -216,3 +216,32 @@ export function IconUsciteDot({ className }: IconProps) {
     />
   );
 }
+
+function distToSeg(
+  x: number,
+  y: number,
+  x0: number,
+  y0: number,
+  x1: number,
+  y1: number
+): number {
+  const dx = x1 - x0;
+  const dy = y1 - y0;
+  const l2 = dx * dx + dy * dy;
+  const t = Math.max(0, Math.min(1, ((x - x0) * dx + (y - y0) * dy) / l2));
+  return Math.hypot(x - (x0 + t * dx), y - (y0 + t * dy));
+}
+
+export function IconSwapDot({ className }: IconProps) {
+  return (
+    <DotMatrix
+      className={className}
+      isOn={(x, y) =>
+        distToSeg(x, y, 1.5, 6, 12, 16.5) <= 2.6 ||
+        inTriangolo(x, y, 10.5, 12, 19, 16.5, 14, 21) ||
+        distToSeg(x, y, 1.5, 18, 12, 7.5) <= 2.6 ||
+        inTriangolo(x, y, 10.5, 12, 18, 7, 14, 3)
+      }
+    />
+  );
+}
