@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import {
   getContiConSaldo,
@@ -29,6 +29,15 @@ export function Overview() {
   const conti = useLiveQuery(() => getContiConSaldo(), []);
   const [contoSelezionatoId, setContoSelezionatoId] = useState<number | null>(null);
   const [contiAperti, setContiAperti] = useState(false);
+
+  const saldoRef = useRef<HTMLDivElement>(null);
+  const [altezzaCard, setAltezzaCard] = useState(0);
+
+  useEffect(() => {
+    if (!contiAperti && saldoRef.current) {
+      setAltezzaCard(saldoRef.current.offsetHeight);
+    }
+  }, [contiAperti]);
 
   const now = new Date();
   const [vista, setVista] = useState<Vista>("mese");
@@ -123,7 +132,10 @@ export function Overview() {
   return (
     <section className="flex flex-col gap-10">
       <div>
-        <Card className="dot-grid-subtle">
+        <Card
+          className="dot-grid-subtle transition-[min-height] duration-300 ease-out"
+          style={altezzaCard > 0 ? { minHeight: altezzaCard } : undefined}
+        >
           <div className="flex w-full items-center justify-between gap-3">
             <div className="flex min-w-0 items-center justify-start gap-3">
               {!contiAperti ? (
@@ -151,6 +163,7 @@ export function Overview() {
             ) : null}
           </div>
 
+          <div>
           {contiAperti ? (
             <div className="mt-2 flex flex-col">
               {conti.map(({ conto, saldo: saldoConto }) => {
@@ -182,7 +195,7 @@ export function Overview() {
             </div>
           ) : (
             <>
-              <div className="mt-6">
+              <div className="mt-6" ref={saldoRef}>
                 <p className="label text-secondary">Saldo</p>
                 <p
                   className={`mt-1 font-sans text-display-md font-bold leading-none tabular-nums tracking-tight ${
@@ -201,6 +214,7 @@ export function Overview() {
               </div>
             </>
           )}
+          </div>
         </Card>
 
         <div className="mt-8 flex flex-col gap-4">
