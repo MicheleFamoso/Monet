@@ -131,7 +131,7 @@ export function Overview() {
                 className="h-7 w-7 shrink-0 text-secondary"
               />
               <h2 className="min-w-0 truncate font-display text-heading font-bold leading-none tracking-tight text-display">
-                {riferimento?.conto.nome ?? "Moneta"}
+                {contiAperti ? "Scegli conto" : (riferimento?.conto.nome ?? "Moneta")}
               </h2>
             </div>
             {conti.length > 1 ? (
@@ -150,9 +150,8 @@ export function Overview() {
           </div>
 
           {contiAperti ? (
-            <div className="mt-6 flex flex-col gap-3">
+            <div className="mt-2 flex flex-col">
               {conti.map(({ conto, saldo: saldoConto }) => {
-                const attivo = conto.id === riferimento?.conto.id;
                 return (
                   <button
                     key={conto.id}
@@ -161,21 +160,16 @@ export function Overview() {
                       setContoSelezionatoId(conto.id!);
                       setContiAperti(false);
                     }}
-                    className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-4 text-left transition-colors active:bg-surface-raised"
+                    className="flex w-full items-center gap-3 border-b border-border py-3 text-left transition-colors last:border-b-0 active:bg-surface-raised"
                   >
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-subtle text-accent" aria-hidden>
-                      <ContoIcona id={conto.icona} className="h-5 w-5" />
+                    <ContoIcona id={conto.icona} className="h-7 w-7 shrink-0 text-secondary" />
+                    <span className="flex min-w-0 items-center gap-1.5">
+                      <span className="truncate font-display text-body font-bold leading-none text-primary">{conto.nome}</span>
+                      {conto.predefinito === true ? <IconStarDot className="h-4 w-4 shrink-0" /> : null}
                     </span>
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="flex items-center gap-1.5">
-                        <span className="truncate font-sans text-body text-primary">{conto.nome}</span>
-                        {conto.predefinito === true ? <IconStarDot className="h-4 w-4 shrink-0" /> : null}
-                      </span>
-                      <span className="font-display text-display-md leading-none tracking-tight text-display">
-                        {formatEuro(saldoConto)}
-                      </span>
+                    <span className="ml-auto shrink-0 font-sans text-body-sm tabular-nums text-secondary">
+                      {formatEuro(saldoConto)}
                     </span>
-                    {attivo ? <span className="label text-accent">Attivo</span> : null}
                   </button>
                 );
               })}
