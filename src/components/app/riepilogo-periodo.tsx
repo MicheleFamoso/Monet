@@ -46,6 +46,15 @@ export function RiepilogoPeriodo({ vista, tipo, settimane, vociGiorno }: Riepilo
                   className="absolute -left-4 top-0 h-full w-4"
                   aria-hidden
                 >
+                  {i > 0 ? (
+                    <span
+                      className="absolute left-1/2 top-0 h-[18px] w-2 -translate-x-1/2"
+                      style={{
+                        backgroundImage:
+                          "repeating-linear-gradient(to bottom, var(--text-disabled) 0 2px, transparent 2px 10px)",
+                      }}
+                    />
+                  ) : null}
                   <span
                     className="absolute left-1/2 top-[26px] bottom-0 w-2 -translate-x-1/2"
                     style={{
