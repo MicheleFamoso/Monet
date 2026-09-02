@@ -9,12 +9,13 @@ import { cn } from "@/lib/cn";
 export interface Settimana {
   label: string;
   range: string;
-  spese: number;
+  totale: number;
   movimenti: Gruppo[];
 }
 
 interface RiepilogoPeriodoProps {
   vista: "mese" | "oggi";
+  tipo: "uscita" | "entrata";
   settimane: Settimana[];
   vociGiorno: MovimentoConCategoria[];
 }
@@ -24,8 +25,9 @@ interface Dettaglio {
   voci: MovimentoConCategoria[];
 }
 
-export function RiepilogoPeriodo({ vista, settimane, vociGiorno }: RiepilogoPeriodoProps) {
+export function RiepilogoPeriodo({ vista, tipo, settimane, vociGiorno }: RiepilogoPeriodoProps) {
   const [dettaglio, setDettaglio] = useState<Dettaglio | null>(null);
+  const entrate = tipo === "entrata";
 
   return (
     <div className="flex flex-col gap-6">
@@ -62,8 +64,14 @@ export function RiepilogoPeriodo({ vista, settimane, vociGiorno }: RiepilogoPeri
                 <p className="label text-secondary">{s.label}</p>
                 <div className="mt-0.5 flex items-baseline justify-between gap-3">
                   <p className="font-mono text-caption text-disabled">{s.range}</p>
-                  <p className="shrink-0 font-mono text-body tabular-nums text-accent">
-                    {formatEuro(s.spese)}
+                  <p
+                    className={cn(
+                      "shrink-0 font-mono text-body tabular-nums",
+                      entrate ? "text-success" : "text-accent",
+                    )}
+                  >
+                    {entrate ? "+" : ""}
+                    {formatEuro(s.totale)}
                   </p>
                 </div>
                 <div className="mt-3 flex flex-col">
@@ -71,10 +79,9 @@ export function RiepilogoPeriodo({ vista, settimane, vociGiorno }: RiepilogoPeri
                     <p className="py-4 text-center font-mono text-caption text-disabled">[NESSUN MOVIMENTO]</p>
                   ) : (
                     <>
-                      <p className="label text-secondary">Movimenti</p>
+                      <p className="label text-secondary">{entrate ? "Entrate" : "Uscite"}</p>
                       <div className="mt-2 flex flex-col">
                         {s.movimenti.map((g) => {
-                          const soloEntrate = g.voci.every((v) => v.movimento.tipo === "entrata");
                           return (
                             <button
                               key={g.nome}
@@ -93,10 +100,10 @@ export function RiepilogoPeriodo({ vista, settimane, vociGiorno }: RiepilogoPeri
                               <span
                                 className={cn(
                                   "shrink-0 font-mono text-body tabular-nums",
-                                  soloEntrate ? "text-success" : "text-primary",
+                                  entrate ? "text-success" : "text-primary",
                                 )}
                               >
-                                {soloEntrate ? "+" : ""}
+                                {entrate ? "+" : ""}
                                 {formatEuro(g.totale)}
                               </span>
                             </button>

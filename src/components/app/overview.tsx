@@ -24,6 +24,7 @@ import { ContoIcona } from "./conto-form";
 import { RiepilogoPeriodo, type Settimana } from "./riepilogo-periodo";
 
 type Vista = "mese" | "oggi";
+type Tipo = "uscita" | "entrata";
 
 export function Overview() {
   const conti = useLiveQuery(() => getContiConSaldo(), []);
@@ -32,6 +33,7 @@ export function Overview() {
 
   const now = new Date();
   const [vista, setVista] = useState<Vista>("mese");
+  const [tipo, setTipo] = useState<Tipo>("entrate");
   const [anno, setAnno] = useState(now.getFullYear());
   const [mese, setMese] = useState(now.getMonth() + 1);
   const [giorno, setGiorno] = useState(now.toISOString().slice(0, 10));
@@ -68,7 +70,7 @@ export function Overview() {
         .filter((r) => r.movimento.tipo === "uscita")
         .reduce((acc, r) => acc + r.movimento.importo, 0);
 
-      const settimane = divideInSettimane(delMese, anno, mese, oggi);
+      const settimane = divideInSettimane(delMese, anno, mese, oggi, tipo);
 
       return { saldo, spese, settimane, vociGiorno: [] as typeof vociGiorno };
     }
@@ -77,13 +79,15 @@ export function Overview() {
       .filter((r) => r.movimento.data <= giorno)
       .reduce((acc, r) => acc + (r.movimento.tipo === "entrata" ? r.movimento.importo : -r.movimento.importo), 0);
 
-    const vociGiorno = movimenti.filter((r) => r.movimento.data === giorno);
-    const spese = vociGiorno
-      .filter((r) => r.movimento.tipo === "uscita")
+    const vociGiorno = movimenti.filter(
+      (r) => r.movimento.data === giorno && r.movimento.tipo === tipo,
+    );
+    const spese = movimenti
+      .filter((r) => r.movimento.data === giorno && r.movimento.tipo === "uscita")
       .reduce((acc, r) => acc + r.movimento.importo, 0);
 
     return { saldo: saldoGiorno, spese, settimane: [] as Settimana[], vociGiorno };
-  }, [movimentiConto, vista, anno, mese, giorno, oggi]);
+  }, [movimentiConto, vista, anno, mese, giorno, oggi, tipo]);
 
   const negativo = saldo < 0;
 
@@ -162,22 +166,32 @@ export function Overview() {
           </div>
         </Card>
 
-        <div className="mt-8 flex flex-col items-start gap-4">
-          <SegmentedControl
-            value={vista}
-            onChange={setVista}
-            options={[
-              { value: "mese" as const, label: "Mese" },
-              { value: "oggi" as const, label: "Oggi" },
-            ]}
-          />
+        <div className="mt-8 flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-3">
+            <SegmentedControl
+              value={vista}
+              onChange={setVista}
+              options={[
+                { value: "mese" as const, label: "Mese" },
+                { value: "oggi" as const, label: "Oggi" },
+              ]}
+            />
+            <SegmentedControl
+              value={tipo}
+              onChange={setTipo}
+              options={[
+                { value: "uscita" as const, label: "Uscite" },
+                { value: "entrata" as const, label: "Entrate" },
+              ]}
+            />
+          </div>
           <div className="w-full">
             <PeriodNav label={label} onPrev={prev} onNext={next} />
           </div>
         </div>
 
         <div className="mt-4">
-          <RiepilogoPeriodo vista={vista} settimane={settimane} vociGiorno={vociGiorno} />
+          <RiepilogoPeriodo vista={vista} tipo={tipo} settimane={settimane} vociGiorno={vociGiorno} />
         </div>
       </div>
 
@@ -226,6 +240,7 @@ function divideInSettimane(
   anno: number,
   mese: number,
   oggi: string,
+  tipo: Tipo,
 ): Settimana[] {
   const primoDelMese = new Date(anno, mese - 1, 1);
   let lunedi = (primoDelMese.getDay() + 6) % 7;
@@ -240,18 +255,16 @@ function divideInSettimane(
 
     const voci = movimenti.filter((r) => {
       const g = Number(r.movimento.data.slice(8, 10));
-      return g >= giornoInizio && g <= giornoFine;
+      return g >= giornoInizio && g <= giornoFine && r.movimento.tipo === tipo;
     });
 
     const movimentiSettimana = aggPerCategoria(voci);
-    const spese = voci
-      .filter((r) => r.movimento.tipo === "uscita")
-      .reduce((acc, r) => acc + r.movimento.importo, 0);
+    const totale = voci.reduce((acc, r) => acc + r.movimento.importo, 0);
     if (movimentiSettimana.length > 0 || inizio <= oggi) {
       prese.push({
         label: `${num}ª settimana`,
         range: `${String(giornoInizio).padStart(2, "0")}–${String(giornoFine).padStart(2, "0")} ${MESI_IT_SHORT[mese - 1]} ${anno}`,
-        spese,
+        totale,
         movimenti: movimentiSettimana,
       });
     }
