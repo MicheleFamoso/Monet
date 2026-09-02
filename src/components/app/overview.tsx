@@ -33,7 +33,7 @@ export function Overview() {
 
   const now = new Date();
   const [vista, setVista] = useState<Vista>("mese");
-  const [tipo, setTipo] = useState<Tipo>("entrate");
+  const [tipo, setTipo] = useState<Tipo>("uscita");
   const [anno, setAnno] = useState(now.getFullYear());
   const [mese, setMese] = useState(now.getMonth() + 1);
   const [giorno, setGiorno] = useState(now.toISOString().slice(0, 10));
