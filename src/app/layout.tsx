@@ -23,6 +23,7 @@ const doto = Doto({
   subsets: ["latin"],
   weight: "variable",
   axes: ["ROND"],
+  preload: false,
 });
 
 export const metadata: Metadata = {
