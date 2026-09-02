@@ -33,12 +33,13 @@ export function Overview() {
   const saldoRef = useRef<HTMLDivElement>(null);
   const [altezzaCard, setAltezzaCard] = useState(0);
 
+  const nonMisurata = altezzaCard === 0;
+
   useEffect(() => {
-    if (!contiAperti && saldoRef.current) {
+    if (saldoRef.current) {
       setAltezzaCard(saldoRef.current.offsetHeight);
     }
-  }, [contiAperti]);
-
+  }, [nonMisurata, saldo, spese]);
   const now = new Date();
   const [vista, setVista] = useState<Vista>("mese");
   const [tipo, setTipo] = useState<Tipo>("uscita");
@@ -133,9 +134,31 @@ export function Overview() {
     <section className="flex flex-col gap-10">
       <div>
         <Card
-          className="dot-grid-subtle transition-[min-height] duration-300 ease-out"
+          className="relative dot-grid-subtle transition-[min-height] duration-300 ease-out"
           style={altezzaCard > 0 ? { minHeight: altezzaCard } : undefined}
         >
+          <div
+            ref={saldoRef}
+            className="pointer-events-none absolute left-0 right-0 opacity-0"
+            aria-hidden
+          >
+            <div className="mt-6">
+              <p className="label text-secondary">Saldo</p>
+              <p
+                className={`mt-1 font-sans text-display-md font-bold leading-none tabular-nums tracking-tight ${
+                  negativo ? "text-accent" : "text-display"
+                }`}
+              >
+                {formatEuro(saldo)}
+              </p>
+            </div>
+            <div className="mt-6 flex flex-col items-end justify-end gap-1 text-accent">
+              <p className="label text-accent">Uscite</p>
+              <p className="font-sans text-heading font-bold leading-none tabular-nums tracking-tight">
+                {formatEuro(spese)}
+              </p>
+            </div>
+          </div>
           <div className="flex w-full items-center justify-between gap-3">
             <div className="flex min-w-0 items-center justify-start gap-3">
               {!contiAperti ? (
@@ -195,7 +218,7 @@ export function Overview() {
             </div>
           ) : (
             <>
-              <div className="mt-6" ref={saldoRef}>
+              <div className="mt-6">
                 <p className="label text-secondary">Saldo</p>
                 <p
                   className={`mt-1 font-sans text-display-md font-bold leading-none tabular-nums tracking-tight ${
