@@ -15,10 +15,11 @@ import {
   type MovimentoConCategoria,
 } from "@/lib/queries";
 import { formatEuro } from "@/lib/money";
+import { Card } from "@/components/ui/card";
 import { FullScreenSheet } from "@/components/ui/full-screen-sheet";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { PeriodNav } from "@/components/ui/period-nav";
-import { IconCrescitaDot, IconUsciteDot, IconSwap, IconStarDot } from "@/components/ui/icons";
+import { IconSwap, IconStarDot } from "@/components/ui/icons";
 import { ContoIcona } from "./conto-form";
 import { RiepilogoPeriodo, type Settimana } from "./riepilogo-periodo";
 
@@ -110,50 +111,50 @@ export function Overview() {
 
   if (conti === undefined) {
     return (
-      <section className="dot-grid-subtle mt-4 flex flex-col gap-10 py-14">
+      <section className="mt-4 flex flex-col gap-10 py-14">
         <p className="font-mono text-caption text-disabled">[LOADING...]</p>
       </section>
     );
   }
 
   return (
-    <section className="dot-grid-subtle mt-4 flex flex-col gap-10 py-14">
+    <section className="mt-4 flex flex-col gap-10 py-14">
       <div>
-        <div className="flex items-center gap-2">
-          <p className="label text-secondary">
-            {riferimento ? `Saldo · ${riferimento.conto.nome}` : "Saldo"}
-          </p>
-          {conti.length > 1 ? (
-            <button
-              type="button"
-              onClick={() => setSheetConti(true)}
-              className="inline-flex h-6 w-6 items-center justify-center text-secondary transition-colors hover:text-primary"
-              aria-label="Cambia conto"
-            >
-              <IconSwap className="h-5 w-5" />
-            </button>
-          ) : null}
-        </div>
-        <div
-          className={`mt-4 flex items-center gap-4 ${
-            negativo ? "text-accent" : "text-display"
-          }`}
-        >
-          <IconCrescitaDot className="h-8 w-8 shrink-0" />
-          <p className="font-display text-display-xl font-bold leading-none tracking-tight">
-            {formatEuro(saldo)}
-          </p>
-        </div>
+        <Card className="dot-grid-subtle">
+          <div className="flex w-full items-center justify-between gap-3">
+            <h2 className="min-w-0 truncate font-display text-heading font-bold leading-none tracking-tight text-display">
+              {riferimento?.conto.nome ?? "Moneta"}
+            </h2>
+            {conti.length > 1 ? (
+              <button
+                type="button"
+                onClick={() => setSheetConti(true)}
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center text-secondary transition-colors hover:text-primary"
+                aria-label="Cambia conto"
+              >
+                <IconSwap className="h-5 w-5" />
+              </button>
+            ) : null}
+          </div>
 
-        <div className="mt-5 flex flex-col items-end justify-end gap-1 text-accent">
-          <p className="label text-accent">Uscite</p>
-          <div className="flex items-center gap-2">
-            <IconUsciteDot className="h-5 w-5" />
-            <p className="font-display text-display-md font-bold leading-none tracking-tight">
+          <div className="mt-6">
+            <p className="label text-secondary">Saldo</p>
+            <p
+              className={`mt-1 font-sans text-display-md font-bold leading-none tabular-nums tracking-tight ${
+                negativo ? "text-accent" : "text-display"
+              }`}
+            >
+              {formatEuro(saldo)}
+            </p>
+          </div>
+
+          <div className="mt-6 flex flex-col items-end justify-end gap-1 text-accent">
+            <p className="label text-accent">Uscite</p>
+            <p className="font-sans text-heading font-bold leading-none tabular-nums tracking-tight">
               {formatEuro(spese)}
             </p>
           </div>
-        </div>
+        </Card>
 
         <div className="mt-8 flex flex-col items-start gap-4">
           <SegmentedControl
