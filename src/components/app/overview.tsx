@@ -262,8 +262,8 @@ function divideInSettimane(
     const totale = voci.reduce((acc, r) => acc + r.movimento.importo, 0);
     if (movimentiSettimana.length > 0 || inizio <= oggi) {
       prese.push({
-        label: `${num}ª settimana`,
-        range: `${String(giornoInizio).padStart(2, "0")}–${String(giornoFine).padStart(2, "0")} ${MESI_IT_SHORT[mese - 1]} ${anno}`,
+        label: `${num}ª S.`,
+        range: `${String(giornoInizio).padStart(2, "0")}–${String(giornoFine).padStart(2, "0")} ${MESI_IT_SHORT[mese - 1]}`,
         totale,
         movimenti: movimentiSettimana,
       });

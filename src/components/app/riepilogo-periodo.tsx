@@ -61,26 +61,16 @@ export function RiepilogoPeriodo({ vista, tipo, settimane, vociGiorno }: Riepilo
                   ) : null}
                   <span className="absolute left-1/2 top-[21px] h-[3px] w-3.5 -translate-x-1/2 rounded-full bg-accent" />
                 </span>
-                <p className="label text-secondary">{s.label}</p>
-                <div className="mt-0.5 flex items-baseline justify-between gap-3">
+                <div className="flex items-baseline gap-2">
+                  <p className="label text-secondary">{s.label}</p>
                   <p className="font-mono text-caption text-disabled">{s.range}</p>
-                  <p
-                    className={cn(
-                      "shrink-0 font-mono text-body tabular-nums",
-                      entrate ? "text-success" : "text-accent",
-                    )}
-                  >
-                    {entrate ? "+" : ""}
-                    {formatEuro(s.totale)}
-                  </p>
                 </div>
                 <div className="mt-3 flex flex-col">
                   {s.movimenti.length === 0 ? (
                     <p className="py-4 text-center font-mono text-caption text-disabled">[NESSUN MOVIMENTO]</p>
                   ) : (
                     <>
-                      <p className="label text-secondary">{entrate ? "Entrate" : "Uscite"}</p>
-                      <div className="mt-2 flex flex-col">
+                      <div className="flex flex-col">
                         {s.movimenti.map((g) => {
                           return (
                             <button
@@ -109,6 +99,18 @@ export function RiepilogoPeriodo({ vista, tipo, settimane, vociGiorno }: Riepilo
                             </button>
                           );
                         })}
+                      </div>
+                      <div className="mt-1 flex w-full items-center justify-between gap-4 border-t border-border pt-3">
+                        <p className="label text-secondary">tot. {entrate ? "entrate" : "uscite"}</p>
+                        <p
+                          className={cn(
+                            "shrink-0 font-mono text-body tabular-nums",
+                            entrate ? "text-success" : "text-accent",
+                          )}
+                        >
+                          {entrate ? "+" : ""}
+                          {formatEuro(s.totale)}
+                        </p>
                       </div>
                     </>
                   )}
