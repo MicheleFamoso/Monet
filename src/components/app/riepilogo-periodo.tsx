@@ -37,7 +37,6 @@ export function RiepilogoPeriodo({ vista, tipo, settimane, vociGiorno }: Riepilo
         ) : (
         <div className="flex flex-col">
           {settimane.map((s, i) => {
-            const ultima = i === settimane.length - 1;
             return (
               <div
                 key={i}
@@ -47,18 +46,13 @@ export function RiepilogoPeriodo({ vista, tipo, settimane, vociGiorno }: Riepilo
                   className="absolute -left-4 top-0 h-full w-4"
                   aria-hidden
                 >
-                  {!ultima ? (
-                    <span
-                      className={cn(
-                        "absolute left-1/2 w-2 -translate-x-1/2",
-                        i === 0 ? "top-[26px] bottom-0" : "top-0 bottom-0",
-                      )}
-                      style={{
-                        backgroundImage:
-                          "repeating-linear-gradient(to bottom, var(--text-disabled) 0 2px, transparent 2px 10px)",
-                      }}
-                    />
-                  ) : null}
+                  <span
+                    className="absolute left-1/2 top-[26px] bottom-0 w-2 -translate-x-1/2"
+                    style={{
+                      backgroundImage:
+                        "repeating-linear-gradient(to bottom, var(--text-disabled) 0 2px, transparent 2px 10px)",
+                    }}
+                  />
                   <span className="absolute left-1/2 top-[21px] h-[3px] w-3.5 -translate-x-1/2 rounded-full bg-accent" />
                 </span>
                 <div className="flex items-baseline gap-2">
