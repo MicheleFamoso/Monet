@@ -30,16 +30,6 @@ export function Overview() {
   const [contoSelezionatoId, setContoSelezionatoId] = useState<number | null>(null);
   const [contiAperti, setContiAperti] = useState(false);
 
-  const saldoRef = useRef<HTMLDivElement>(null);
-  const [altezzaCard, setAltezzaCard] = useState(0);
-
-  const nonMisurata = altezzaCard === 0;
-
-  useEffect(() => {
-    if (saldoRef.current) {
-      setAltezzaCard(saldoRef.current.offsetHeight);
-    }
-  }, [nonMisurata, saldo, spese]);
   const now = new Date();
   const [vista, setVista] = useState<Vista>("mese");
   const [tipo, setTipo] = useState<Tipo>("uscita");
@@ -99,6 +89,17 @@ export function Overview() {
   }, [movimentiConto, vista, anno, mese, giorno, oggi, tipo]);
 
   const negativo = saldo < 0;
+
+  const saldoRef = useRef<HTMLDivElement>(null);
+  const [altezzaCard, setAltezzaCard] = useState(0);
+
+  const nonMisurata = altezzaCard === 0;
+
+  useEffect(() => {
+    if (saldoRef.current) {
+      setAltezzaCard(saldoRef.current.offsetHeight);
+    }
+  }, [nonMisurata, saldo, spese]);
 
   const label = vista === "mese" ? etichettaMese(anno, mese) : etichettaGiorno(giorno);
 
