@@ -111,20 +111,26 @@ export function Overview() {
 
   if (conti === undefined) {
     return (
-      <section className="mt-4 flex flex-col gap-10 py-14">
+      <section className="flex flex-col gap-10">
         <p className="font-mono text-caption text-disabled">[LOADING...]</p>
       </section>
     );
   }
 
   return (
-    <section className="mt-4 flex flex-col gap-10 py-14">
+    <section className="flex flex-col gap-10">
       <div>
         <Card className="dot-grid-subtle">
           <div className="flex w-full items-center justify-between gap-3">
-            <h2 className="min-w-0 truncate font-display text-heading font-bold leading-none tracking-tight text-display">
-              {riferimento?.conto.nome ?? "Moneta"}
-            </h2>
+            <div className="flex min-w-0 items-center justify-start gap-3">
+              <ContoIcona
+                id={riferimento?.conto.icona}
+                className="h-7 w-7 shrink-0 text-secondary"
+              />
+              <h2 className="min-w-0 truncate font-display text-heading font-bold leading-none tracking-tight text-display">
+                {riferimento?.conto.nome ?? "Moneta"}
+              </h2>
+            </div>
             {conti.length > 1 ? (
               <button
                 type="button"
