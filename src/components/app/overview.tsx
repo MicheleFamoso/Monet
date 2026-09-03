@@ -160,36 +160,34 @@ export function Overview() {
               </p>
             </div>
           </div>
-          <div className="flex w-full items-center justify-between gap-3">
-            <div className="flex min-w-0 items-center justify-start gap-3">
-              {!contiAperti ? (
-                <ContoIcona
-                  id={riferimento?.conto.icona}
-                  className="h-7 w-7 shrink-0 text-secondary"
-                />
-              ) : null}
-              <h2 className="min-w-0 truncate font-display text-heading font-bold leading-none tracking-tight text-display">
+          <button
+            type="button"
+            onClick={() => setContiAperti((a) => !a)}
+            aria-expanded={contiAperti}
+            className="flex w-full items-center justify-between gap-3 rounded-xl text-left transition-colors hover:bg-surface-raised/50"
+          >
+            <span className="flex min-w-0 items-center justify-start gap-3">
+              <ContoIcona
+                id={riferimento?.conto.icona}
+                className="h-7 w-7 shrink-0 text-secondary"
+              />
+              <span className="min-w-0 truncate font-display text-heading font-bold leading-none tracking-tight text-display">
                 {contiAperti ? "Scegli conto" : (riferimento?.conto.nome ?? "Moneta")}
-              </h2>
-            </div>
+              </span>
+            </span>
             {conti.length > 1 ? (
-              <button
-                type="button"
-                onClick={() => setContiAperti((a) => !a)}
-                className="inline-flex h-9 w-9 shrink-0 items-center justify-center text-secondary transition-colors hover:text-primary"
-                aria-label="Cambia conto"
-                aria-expanded={contiAperti}
-              >
+              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center text-secondary">
                 <IconSwap
                   className={`h-5 w-5 transition-transform duration-300 ${contiAperti ? "rotate-90" : ""}`}
                 />
-              </button>
+              </span>
             ) : null}
-          </div>
+          </button>
 
-          <div>
+          <div className="relative">
+          <div key={contiAperti ? "lista" : "saldo"} className="card-content-in">
           {contiAperti ? (
-            <div className="mt-2 flex flex-col">
+            <div className="mt-4 flex flex-col gap-2">
               {conti.map(({ conto, saldo: saldoConto }) => {
                 const attivo = conto.id === riferimento?.conto.id;
                 return (
@@ -200,12 +198,12 @@ export function Overview() {
                       setContoSelezionatoId(conto.id!);
                       setContiAperti(false);
                     }}
-                    className="flex w-full items-center gap-3 border-b border-border py-3 text-left transition-colors last:border-b-0 active:bg-surface-raised"
+                    className="flex w-full items-center gap-3 rounded-2xl bg-surface-raised px-4 py-3 text-left transition-colors active:bg-surface"
                   >
                     <ContoIcona id={conto.icona} className="h-7 w-7 shrink-0 text-secondary" />
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="flex items-center gap-1.5">
-                        <span className="truncate font-display text-heading font-bold leading-none text-primary">{conto.nome}</span>
+                        <span className="truncate font-display text-body font-bold leading-none text-primary">{conto.nome}</span>
                         {conto.predefinito === true ? <IconStarDot className="h-4 w-4 shrink-0" /> : null}
                       </span>
                       {attivo ? <span className="mt-0.5 label text-accent">Attivo</span> : null}
@@ -238,6 +236,7 @@ export function Overview() {
               </div>
             </>
           )}
+          </div>
           </div>
         </Card>
 
