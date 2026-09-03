@@ -94,6 +94,7 @@ export function Overview() {
   const saldoRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const compattoRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const [altezzaCard, setAltezzaCard] = useState(0);
   const [altezzaCompatto, setAltezzaCompatto] = useState(0);
 
@@ -112,23 +113,18 @@ export function Overview() {
   }, [nonMisurata, saldo, spese]);
 
   useEffect(() => {
-    const onScroll = () => {
-      const node = cardRef.current;
-      if (!node) return;
-      const top = node.getBoundingClientRect().top;
-      setCompatto((prev) => {
-        if (!prev && top <= 0) return true;
-        if (prev && top > 24) return false;
-        return prev;
-      });
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          setCompatto(!entry.isIntersecting);
+        }
+      },
+      { rootMargin: "-1px 0px 0px 0px", threshold: 0 },
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
   }, []);
 
   const label = vista === "mese" ? etichettaMese(anno, mese) : etichettaGiorno(giorno);
@@ -165,8 +161,13 @@ export function Overview() {
     <section className="flex flex-col gap-10">
       <div>
         <div ref={cardRef} className="-mx-5 sticky top-0 z-30 bg-[var(--black)] px-5 pt-5">
+        <div
+          ref={sentinelRef}
+          className="pointer-events-none absolute -top-5 left-0 h-px w-full"
+          aria-hidden
+        />
         <Card
-          className="dot-grid-subtle transition-[min-height] duration-300 ease-out"
+          className="dot-grid-subtle transition-[min-height] duration-500 ease-out"
           style={{
             minHeight: (compatto
               ? altezzaCompatto
