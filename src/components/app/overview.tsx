@@ -135,7 +135,7 @@ export function Overview() {
     <section className="flex flex-col gap-10">
       <div>
         <Card
-          className="relative dot-grid-subtle transition-[min-height] duration-300 ease-out"
+          className="sticky top-0 z-20 dot-grid-subtle transition-[min-height] duration-300 ease-out bg-[var(--black)]"
           style={altezzaCard > 0 ? { minHeight: altezzaCard } : undefined}
         >
           <div
@@ -187,7 +187,7 @@ export function Overview() {
           <div className="relative">
           <div key={contiAperti ? "lista" : "saldo"} className="card-content-in">
           {contiAperti ? (
-            <div className="mt-4 flex flex-col gap-2">
+            <div className="mt-6 flex flex-col gap-2">
               {conti.map(({ conto, saldo: saldoConto }) => {
                 const attivo = conto.id === riferimento?.conto.id;
                 return (
@@ -259,6 +259,12 @@ export function Overview() {
               ]}
             />
           </div>
+        </div>
+
+        <div
+          className="sticky z-10 -mt-4 bg-[var(--black)] pt-4"
+          style={{ top: altezzaCard > 0 ? altezzaCard : 0 }}
+        >
           <div className="w-full">
             <PeriodNav label={label} onPrev={prev} onNext={next} />
           </div>
