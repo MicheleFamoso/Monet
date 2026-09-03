@@ -117,8 +117,8 @@ export function Overview() {
       if (!node) return;
       const top = node.getBoundingClientRect().top;
       setCompatto((prev) => {
-        if (!prev && top <= -60) return true;
-        if (prev && top > 12) return false;
+        if (!prev && top <= 0) return true;
+        if (prev && top > 24) return false;
         return prev;
       });
     };
