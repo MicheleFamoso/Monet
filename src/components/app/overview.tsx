@@ -160,12 +160,8 @@ export function Overview() {
   return (
     <section className="flex flex-col gap-10">
       <div>
+        <div ref={sentinelRef} className="h-px w-full" aria-hidden />
         <div ref={cardRef} className="-mx-5 sticky top-0 z-30 bg-[var(--black)] px-5 pt-5">
-        <div
-          ref={sentinelRef}
-          className="pointer-events-none absolute -top-5 left-0 h-px w-full"
-          aria-hidden
-        />
         <Card
           className="dot-grid-subtle transition-[min-height] duration-500 ease-out"
           style={{
