@@ -93,9 +93,17 @@ export function Overview() {
 
   const saldoRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const compattoRef = useRef<HTMLDivElement>(null);
   const [altezzaCard, setAltezzaCard] = useState(0);
+  const [altezzaCompatto, setAltezzaCompatto] = useState(0);
 
   const nonMisurata = altezzaCard === 0;
+
+  useEffect(() => {
+    if (compattoRef.current) {
+      setAltezzaCompatto(compattoRef.current.offsetHeight);
+    }
+  });
 
   useEffect(() => {
     if (saldoRef.current) {
@@ -106,9 +114,13 @@ export function Overview() {
   useEffect(() => {
     const onScroll = () => {
       const node = cardRef.current;
-      if (node) {
-        setCompatto(node.getBoundingClientRect().top <= 0);
-      }
+      if (!node) return;
+      const top = node.getBoundingClientRect().top;
+      setCompatto((prev) => {
+        if (!prev && top <= -60) return true;
+        if (prev && top > 12) return false;
+        return prev;
+      });
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -155,7 +167,11 @@ export function Overview() {
         <div ref={cardRef} className="-mx-5 sticky top-0 z-30 bg-[var(--black)] px-5 pt-5">
         <Card
           className="dot-grid-subtle transition-[min-height] duration-300 ease-out"
-          style={!compatto && altezzaCard > 0 ? { minHeight: altezzaCard } : undefined}
+          style={{
+            minHeight: (compatto
+              ? altezzaCompatto
+              : altezzaCard),
+          }}
         >
           <div
             ref={saldoRef}
@@ -208,7 +224,7 @@ export function Overview() {
           </button>
 
           {compatto && !contiAperti ? (
-            <div className="mt-0.5 flex items-end justify-end gap-4">
+            <div ref={compattoRef} className="mt-0.5 flex items-end justify-end gap-4">
               <div className="flex flex-col items-end leading-none">
                 <p className="label text-accent">Uscite</p>
                 <p className="font-sans text-caption tabular-nums text-accent">
