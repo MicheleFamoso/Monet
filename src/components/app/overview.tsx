@@ -29,6 +29,7 @@ export function Overview() {
   const conti = useLiveQuery(() => getContiConSaldo(), []);
   const [contoSelezionatoId, setContoSelezionatoId] = useState<number | null>(null);
   const [contiAperti, setContiAperti] = useState(false);
+  const [compatto, setCompatto] = useState(false);
 
   const now = new Date();
   const [vista, setVista] = useState<Vista>("mese");
@@ -91,6 +92,7 @@ export function Overview() {
   const negativo = saldo < 0;
 
   const saldoRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [altezzaCard, setAltezzaCard] = useState(0);
 
   const nonMisurata = altezzaCard === 0;
@@ -100,6 +102,22 @@ export function Overview() {
       setAltezzaCard(saldoRef.current.offsetHeight);
     }
   }, [nonMisurata, saldo, spese]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const node = cardRef.current;
+      if (node) {
+        setCompatto(node.getBoundingClientRect().top <= 0);
+      }
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   const label = vista === "mese" ? etichettaMese(anno, mese) : etichettaGiorno(giorno);
 
@@ -134,9 +152,10 @@ export function Overview() {
   return (
     <section className="flex flex-col gap-10">
       <div>
+        <div ref={cardRef} className="-mx-5 sticky top-0 z-30 bg-[var(--black)] px-5 pt-5">
         <Card
-          className="sticky top-0 z-20 dot-grid-subtle transition-[min-height] duration-300 ease-out bg-[var(--black)]"
-          style={altezzaCard > 0 ? { minHeight: altezzaCard } : undefined}
+          className="dot-grid-subtle transition-[min-height] duration-300 ease-out"
+          style={!compatto && altezzaCard > 0 ? { minHeight: altezzaCard } : undefined}
         >
           <div
             ref={saldoRef}
@@ -169,9 +188,13 @@ export function Overview() {
             <span className="flex min-w-0 items-center justify-start gap-3">
               <ContoIcona
                 id={riferimento?.conto.icona}
-                className="h-7 w-7 shrink-0 text-secondary"
+                className={`shrink-0 text-secondary transition-all duration-300 ${compatto ? "h-5 w-5" : "h-7 w-7"}`}
               />
-              <span className="min-w-0 truncate font-display text-heading font-bold leading-none tracking-tight text-display">
+              <span
+                className={`min-w-0 truncate font-display font-bold leading-none tracking-tight text-display transition-all duration-300 ${
+                  compatto ? "text-body" : "text-heading"
+                }`}
+              >
                 {contiAperti ? "Scegli conto" : (riferimento?.conto.nome ?? "Moneta")}
               </span>
             </span>
@@ -183,6 +206,23 @@ export function Overview() {
               </span>
             ) : null}
           </button>
+
+          {compatto && !contiAperti ? (
+            <div className="mt-0.5 flex items-end justify-end gap-4">
+              <div className="flex flex-col items-end leading-none">
+                <p className="label text-accent">Uscite</p>
+                <p className="font-sans text-caption tabular-nums text-accent">
+                  {formatEuro(spese)}
+                </p>
+              </div>
+              <div className={`flex flex-col items-end leading-none ${negativo ? "text-accent" : "text-display"}`}>
+                <p className="label text-secondary">Saldo</p>
+                <p className="font-sans text-caption tabular-nums">
+                  {formatEuro(saldo)}
+                </p>
+              </div>
+            </div>
+          ) : null}
 
           <div className="relative">
           <div key={contiAperti ? "lista" : "saldo"} className="card-content-in">
@@ -215,7 +255,7 @@ export function Overview() {
                 );
               })}
             </div>
-          ) : (
+          ) : !compatto ? (
             <>
               <div className="mt-6">
                 <p className="label text-secondary">Saldo</p>
@@ -235,12 +275,12 @@ export function Overview() {
                 </p>
               </div>
             </>
-          )}
+          ) : null}
           </div>
           </div>
         </Card>
 
-        <div className="mt-8 flex flex-col gap-4">
+        <div className="mt-4 flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
             <SegmentedControl
               value={vista}
@@ -259,15 +299,10 @@ export function Overview() {
               ]}
             />
           </div>
-        </div>
-
-        <div
-          className="sticky z-10 -mt-4 bg-[var(--black)] pt-4"
-          style={{ top: altezzaCard > 0 ? altezzaCard : 0 }}
-        >
           <div className="w-full">
             <PeriodNav label={label} onPrev={prev} onNext={next} />
           </div>
+        </div>
         </div>
 
         <div className="mt-4">
