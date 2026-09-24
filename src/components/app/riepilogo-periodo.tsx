@@ -40,33 +40,11 @@ export function RiepilogoPeriodo({ vista, tipo, settimane, vociGiorno }: Riepilo
             return (
               <div
                 key={i}
-                className="relative py-4 pl-6"
+                className="py-4"
               >
-                <span
-                  className="absolute -left-4 top-0 h-full w-4"
-                  aria-hidden
-                >
-                  {i > 0 ? (
-                    <span
-                      className="absolute left-1/2 top-0 h-[18px] w-2 -translate-x-1/2"
-                      style={{
-                        backgroundImage:
-                          "repeating-linear-gradient(to bottom, var(--text-disabled) 0 2px, transparent 2px 10px)",
-                      }}
-                    />
-                  ) : null}
-                  <span
-                    className="absolute left-1/2 top-[26px] bottom-0 w-2 -translate-x-1/2"
-                    style={{
-                      backgroundImage:
-                        "repeating-linear-gradient(to bottom, var(--text-disabled) 0 2px, transparent 2px 10px)",
-                    }}
-                  />
-                  <span className="absolute left-1/2 top-[21px] h-[3px] w-3.5 -translate-x-1/2 rounded-full bg-accent" />
-                </span>
                 <div className="flex items-baseline gap-2">
-                  <p className="label text-secondary">{s.label}</p>
-                  <p className="font-mono text-caption text-disabled">{s.range}</p>
+                  <p className="font-display text-body font-bold leading-none tracking-tight text-display">{s.label}</p>
+                  <p className="font-mono text-caption text-secondary">{s.range}</p>
                 </div>
                 <div className="mt-3 flex flex-col">
                   {s.movimenti.length === 0 ? (
