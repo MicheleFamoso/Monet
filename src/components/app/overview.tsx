@@ -115,9 +115,15 @@ export function Overview() {
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
+    console.log("[diag] observer installato, sentinel =", sentinel);
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
+          console.log(
+            "[diag] isIntersecting:", entry.isIntersecting,
+            "sentinel.top:", entry.boundingClientRect.top.toFixed(1),
+            "sentinel.height:", entry.boundingClientRect.height,
+          );
           setCompatto(!entry.isIntersecting);
         }
       },
@@ -160,10 +166,12 @@ export function Overview() {
   return (
     <section className="flex flex-col gap-10">
       <div>
-        <div ref={sentinelRef} className="h-px w-full" aria-hidden />
+        <div ref={sentinelRef} className="h-1 w-full bg-accent" aria-hidden />
         <div ref={cardRef} className="-mx-5 sticky top-0 z-30 bg-[var(--black)] px-5 pt-5">
         <Card
-          className="dot-grid-subtle transition-[min-height] duration-500 ease-out"
+          className={`dot-grid-subtle transition-[min-height] duration-500 ease-out ${
+            compatto ? "ring-2 ring-accent" : ""
+          }`}
           style={{
             minHeight: (compatto
               ? altezzaCompatto
