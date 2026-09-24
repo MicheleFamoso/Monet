@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import {
   getContiConSaldo,
@@ -29,7 +29,6 @@ export function Overview() {
   const conti = useLiveQuery(() => getContiConSaldo(), []);
   const [contoSelezionatoId, setContoSelezionatoId] = useState<number | null>(null);
   const [contiAperti, setContiAperti] = useState(false);
-  const [compatto, setCompatto] = useState(false);
 
   const now = new Date();
   const [vista, setVista] = useState<Vista>("mese");
@@ -91,41 +90,6 @@ export function Overview() {
 
   const negativo = saldo < 0;
 
-  const saldoRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const compattoRef = useRef<HTMLDivElement>(null);
-  const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
-  const [altezzaCard, setAltezzaCard] = useState(0);
-  const [altezzaCompatto, setAltezzaCompatto] = useState(0);
-
-  const nonMisurata = altezzaCard === 0;
-
-  useEffect(() => {
-    if (compattoRef.current) {
-      setAltezzaCompatto(compattoRef.current.offsetHeight);
-    }
-  });
-
-  useEffect(() => {
-    if (saldoRef.current) {
-      setAltezzaCard(saldoRef.current.offsetHeight);
-    }
-  }, [nonMisurata, saldo, spese]);
-
-  useEffect(() => {
-    if (!sentinel) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          setCompatto(!entry.isIntersecting);
-        }
-      },
-      { rootMargin: "-1px 0px 0px 0px", threshold: 0 },
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [sentinel]);
-
   const label = vista === "mese" ? etichettaMese(anno, mese) : etichettaGiorno(giorno);
 
   function prev() {
@@ -159,38 +123,8 @@ export function Overview() {
   return (
     <section className="flex flex-col gap-10">
       <div>
-        <div ref={setSentinel} className="h-px w-full" aria-hidden />
-        <div ref={cardRef} className="-mx-5 sticky top-0 z-30 bg-[var(--black)] px-5 pt-5">
-        <Card
-          className="dot-grid-subtle transition-[min-height] duration-500 ease-out"
-          style={{
-            minHeight: (compatto
-              ? altezzaCompatto
-              : altezzaCard),
-          }}
-        >
-          <div
-            ref={saldoRef}
-            className="pointer-events-none absolute left-0 right-0 opacity-0"
-            aria-hidden
-          >
-            <div className="mt-6">
-              <p className="label text-secondary">Saldo</p>
-              <p
-                className={`mt-1 font-sans text-display-md font-bold leading-none tabular-nums tracking-tight ${
-                  negativo ? "text-accent" : "text-display"
-                }`}
-              >
-                {formatEuro(saldo)}
-              </p>
-            </div>
-            <div className="mt-6 flex flex-col items-end justify-end gap-1 text-accent">
-              <p className="label text-accent">Uscite</p>
-              <p className="font-sans text-heading font-bold leading-none tabular-nums tracking-tight">
-                {formatEuro(spese)}
-              </p>
-            </div>
-          </div>
+        <div className="-mx-5 sticky top-0 z-30 bg-[var(--black)] px-5 pt-5">
+        <Card className="dot-grid-subtle">
           <button
             type="button"
             onClick={() => setContiAperti((a) => !a)}
@@ -200,13 +134,9 @@ export function Overview() {
             <span className="flex min-w-0 items-center justify-start gap-3">
               <ContoIcona
                 id={riferimento?.conto.icona}
-                className={`shrink-0 text-secondary transition-all duration-300 ${compatto ? "h-5 w-5" : "h-7 w-7"}`}
+                className="h-5 w-5 shrink-0 text-secondary"
               />
-              <span
-                className={`min-w-0 truncate font-display font-bold leading-none tracking-tight text-display transition-all duration-300 ${
-                  compatto ? "text-body" : "text-heading"
-                }`}
-              >
+              <span className="min-w-0 truncate font-display text-body font-bold leading-none tracking-tight text-display">
                 {contiAperti ? "Scegli conto" : (riferimento?.conto.nome ?? "Moneta")}
               </span>
             </span>
@@ -219,8 +149,8 @@ export function Overview() {
             ) : null}
           </button>
 
-          {compatto && !contiAperti ? (
-            <div ref={compattoRef} className="mt-0.5 flex items-end justify-end gap-4">
+          {!contiAperti ? (
+            <div className="card-content-in mt-0.5 flex items-end justify-end gap-4">
               <div className="flex flex-col items-end leading-none">
                 <p className="label text-accent">Uscite</p>
                 <p className="font-sans text-caption tabular-nums text-accent">
@@ -236,10 +166,8 @@ export function Overview() {
             </div>
           ) : null}
 
-          <div className="relative">
-          <div key={contiAperti ? "lista" : "saldo"} className="card-content-in">
           {contiAperti ? (
-            <div className="mt-6 flex flex-col gap-2">
+            <div className="card-content-in mt-6 flex flex-col gap-2">
               {conti.map(({ conto, saldo: saldoConto }) => {
                 const attivo = conto.id === riferimento?.conto.id;
                 return (
@@ -267,29 +195,7 @@ export function Overview() {
                 );
               })}
             </div>
-          ) : !compatto ? (
-            <>
-              <div className="mt-6">
-                <p className="label text-secondary">Saldo</p>
-                <p
-                  className={`mt-1 font-sans text-display-md font-bold leading-none tabular-nums tracking-tight ${
-                    negativo ? "text-accent" : "text-display"
-                  }`}
-                >
-                  {formatEuro(saldo)}
-                </p>
-              </div>
-
-              <div className="mt-6 flex flex-col items-end justify-end gap-1 text-accent">
-                <p className="label text-accent">Uscite</p>
-                <p className="font-sans text-heading font-bold leading-none tabular-nums tracking-tight">
-                  {formatEuro(spese)}
-                </p>
-              </div>
-            </>
           ) : null}
-          </div>
-          </div>
         </Card>
 
         <div className="mt-4 flex flex-col gap-3">
