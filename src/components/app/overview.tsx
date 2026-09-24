@@ -123,6 +123,24 @@ export function Overview() {
   return (
     <section className="flex flex-col gap-10">
       <div>
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <SegmentedControl
+            value={vista}
+            onChange={setVista}
+            options={[
+              { value: "mese" as const, label: "Mese" },
+              { value: "oggi" as const, label: "Oggi" },
+            ]}
+          />
+          <SegmentedControl
+            value={tipo}
+            onChange={setTipo}
+            options={[
+              { value: "uscita" as const, label: "Uscite" },
+              { value: "entrata" as const, label: "Entrate" },
+            ]}
+          />
+        </div>
         <div className="-mx-5 sticky top-0 z-30 bg-[var(--black)] px-5 pt-5">
         <Card className="dot-grid-subtle">
           <button
@@ -198,28 +216,8 @@ export function Overview() {
           ) : null}
         </Card>
 
-        <div className="mt-4 flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-3">
-            <SegmentedControl
-              value={vista}
-              onChange={setVista}
-              options={[
-                { value: "mese" as const, label: "Mese" },
-                { value: "oggi" as const, label: "Oggi" },
-              ]}
-            />
-            <SegmentedControl
-              value={tipo}
-              onChange={setTipo}
-              options={[
-                { value: "uscita" as const, label: "Uscite" },
-                { value: "entrata" as const, label: "Entrate" },
-              ]}
-            />
-          </div>
-          <div className="w-full">
-            <PeriodNav label={label} onPrev={prev} onNext={next} />
-          </div>
+        <div className="mt-4 w-full">
+          <PeriodNav label={label} onPrev={prev} onNext={next} />
         </div>
         </div>
 
