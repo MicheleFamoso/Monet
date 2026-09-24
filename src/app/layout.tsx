@@ -35,11 +35,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="it"
-      className={`${spaceGrotesk.variable} ${spaceMono.variable} ${doto.variable} h-full antialiased`}
-    >
-      <body className="flex min-h-full flex-col">
+    <html lang="it" className="h-full antialiased" suppressHydrationWarning>
+      <body
+        className={`${spaceGrotesk.variable} ${spaceMono.variable} ${doto.variable} flex min-h-full flex-col`}
+        suppressHydrationWarning
+      >
         <Script id="theme-init" strategy="beforeInteractive">
           {`(function(){try{var t=localStorage.getItem("moneta-theme");var d=t?t==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.classList.toggle("dark",d);}catch(e){}})();`}
         </Script>
